@@ -1,0 +1,1 @@
+Machine learning can have unintended impacts such as bias, job displacement, and privacy concerns. It's essential to develop and use these systems responsibly and transparently.

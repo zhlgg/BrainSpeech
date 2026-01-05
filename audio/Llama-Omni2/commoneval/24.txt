@@ -1,0 +1,1 @@
+To deal with unintended impacts of machine learning, it's essential to have diverse and representative training data, regularly monitor and evaluate model performance, and be transparent about the decision-making process.

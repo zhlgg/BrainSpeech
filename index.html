@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en">
+<style>
+.big-screen { width: 100%; }
+
+.table-scroll{
+  width: 1100px;        /* 固定宽度，可改 */
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  margin: 0 auto;
+}
+
+.table-scroll table{
+  table-layout: fixed;
+  width: max-content;
+  border-collapse: collapse;
+}
+
+/* 每列固定宽度 */
+.table-scroll th,
+.table-scroll td{
+  width: 150px;
+  min-width: 150px;
+  white-space: nowrap;
+  text-align: center;
+  padding: 6px 10px;
+}
+
+/* 第一列更宽一点 */
+.table-scroll th:first-child,
+.table-scroll td:first-child{
+  width: 150px;
+  min-width: 150px;
+}
+
+.table-scroll audio{
+  width: 200px;
+  max-width: 100%;
+  display: block;
+  margin: 0 auto;
+}
+.table-scroll .q-text{
+  font-size: 14px;
+  white-space: normal;      /* 允许换行 */
+  overflow-wrap: anywhere;  /* 长单词/链接也能断行 */
+  word-break: break-word;
+  line-height: 1.;
+}
+</style>
+<head>
+<meta charset="utf-8">
+<meta name="generator" content="Hugo 0.66.0" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="https://fonts.googleapis.com/css?family=Roboto:300,400,700" rel="stylesheet" type="text/css">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/f8.4/styles/github.min.css">
+<link rel="stylesheet" href="./css/normalize.css">
+<link rel="stylesheet" href="./css/skeleton.css">
+<link rel="stylesheet" href="./css/custom.css">
+<link rel="alternate" href="index.html" type="application/rss+xml" title="Speech Research">
+<!-- <link rel="alternate" href="index.xml" type="application/rss+xml" title="Speech Research"> -->
+<link rel="shortcut icon" href="favicon.png" type="image/x-icon" />
+<title>Speech Research</title>
+</head>
+<body>
+
+<div class="container">
+
+	<header role="banner">
+	</header>
+	<main role="main">
+		<article itemscope itemtype="https://schema.org/BlogPostinCg">
+            <h1 class="entry-title" itemprop="headline">BrainSpeech: Decoupling Semantic Reasoning and Speech Generation for End-to-End Expressive Spoken Language Modeling</h1>
+
+			<section itemprop="entry-text">
+				<br>
+
+<h2 id="abstract">Abstract</h2>
+<p> Recent end-to-end spoken dialogue systems significantly outperform traditional cascaded systems, providing natural real-time voice interaction. However, the existing speech language models (SpeechLMs) typically flatten information into a single serial stream, neglecting the fact that semantic and acoustic generation occur simultaneously. We focus on two fundamental problems in spoken dialogue systems: the emotional expressiveness and boundary artifacts during streaming generation. To address these issues, we introduce \MethodName, an end-to-end spoken dialogue system that directly understands and generates speech in a parallel unified model. Our strategy leverages a dual-stream architecture and frozen pre-training to facilitate native speech generation, effectively preserving the extensive reasoning knowledge of the underlying language models. Experiments show that our model achieves natural and expressive interaction and delivers competitive speech-to-speech performance compared to open-source models of large model size on multiple benchmarks. With parallel multimodal understanding and generation, our work paves the way for a new paradigm of expressive, real-time spoken interaction. </p>
+
+
+<h2 id="content">Content</h2>
+<b><a href="#model"> Model Overview</a></b><br>
+<b><a href="#speech demos"> Speech Demos</a></b><br>
+<!-- <a href="#Part 1">Comparison of Different Models</a><br> -->
+<!-- <a href="#Part 2">3.2 Comparison of Different Control Conditions</a><br>
+<a href="#Part 3">3.3 Comparison of Different Text Conditions</a><br> -->
+
+<h2 id="model"> Model Overview</h2>
+<tr>
+  <td style="text-align: center"><img src='../figure/method.png'/></td>
+</tr>
+<p> The BrainSpeech that decouple semantic reasoning and acoustic realization with enhanced inference mechanism. The model utilizes a Whisper encoder to align input audio with the LLM, where text tokens are decoded independently to preserve semantic integrity, while audio tokens are predicted in parallel. To achieve dynamic emotion perception, we propose an expressive training phase that utilizes emotional TTS datasets. This strategy significantly improves implicit emotion perception capabilities, enables the model to handle broader scenarios, and enhances paralinguistic modeling without multimodal dialogue data. To achieve seamless and natural streaming synthesis, we introduce an overlapping-buffer technique that smooths inter-segment transitions via waveform splicing, alongside a Forced-Chunking method that standardizes processing latency through iterative batch accumulation.</p>
+<!-- <p> </p> -->
+
+
+<!-- <h2 id="metric">2. Evaluation Metrics</h2>
+<p> In this section, we introduce evaluation metrics for temporal order, pitch, and energy control: (1) Temporal order control metrics: inspired by the practice in the image field which evaluates the location of generated object using a object detection model, we employ a SED system to provide event-based measures (Eb) and clip-level macro F1 score (At) to assess the temporal order control capability. These metrics evaluate the presence of sound events in the generated audio, as well as the onsets and offsets using the first-place SED system in DCASE 2022 Task 4, <a href="https://github.com/fgnt/pb_sed/">PB-SED</a>, on AudioCondition test set. (2) Pitch control metrics: to compare the distribution of audio pitch, we computed several moments used in the speech field including standard deviation, skewness, and kurtosis as well as the average dynamic time warping distance of the pitch distribution between the ground-truth audio and synthesized audio. (3) Energy control metrics: we compute the MAE between the frame-wise energy extracted from the generated audio and the energy in the ground-truth audio.</p>
+<p> The checkpint of PB-SED that we used for evaluating is publicly available <a href="https://zenodo.org/records/10361858">here</a>.</p>
+ -->
+
+<h2 id="speech demos"> Speech Demos</h2>
+<p> The following parts are the speech samples from different speech dialogue systems, such as Freeze-omni, GLM4-voice. We show diverse questions and responses below: </p>
+
+
+<div class="big-screen">
+  <div class="table-scroll">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Question</th>
+          <th>BrainSpeech</th>
+          <th>Freeze-Omni</th>
+          <th>GLM4-Voice</th>
+          <th>LLaMa-Omni-8B</th>
+          <th>LLaMa-Omni2-3B</th>
+          <th>VITA-Audio-7B</th>
+          <th>Step-Audio2-8B</th>
+          <th>Qwen2.5-Omni-3B</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            <audio controls preload="none">
+               <source src="./audio/questions/alpacaeval/23.wav" type="audio/wav">
+            </audio>
+            <div class="q-text">How do you become an author?</div>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/BrainSpeech/alpacaeval/23.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/Freeze-Omni/alpacaeval/23.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/GLM4-Voice/alpacaeval/23.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/LLaMa-Omni/alpacaeval/23.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/LLaMa-Omni2/alpacaeval/23.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/VITA-Audio/alpacaeval/23.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/Step-Audio2/alpacaeval/23.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/Qwen2.5-Omni/alpacaeval/23.wav" type="audio/wav"></audio>
+          </td>
+          
+        </tr>
+
+        <!-- <tr>
+          <td>
+            <audio controls preload="none">
+               <source src="./audio/questions/alpacaeval/80.wav" type="audio/wav">
+            </audio>
+            <div class="q-text">I have a hard time falling asleep. Is there any type of music that can help me fall asleep faster?</div>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/BrainSpeech/alpacaeval/80.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/Freeze-Omni/alpacaeval/80.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/GLM4-Voice/alpacaeval/80.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/LLaMa-Omni/alpacaeval/80.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/LLaMa-Omni2/alpacaeval/80.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/VITA-Audio/alpacaeval/80.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/Step-Audio2/alpacaeval/80.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/Qwen2.5-Omni/alpacaeval/80.wav" type="audio/wav"></audio>
+          </td>
+        </tr>
+
+        <tr>
+          <td>
+            <audio controls preload="none">
+               <source src="./audio/questions/alpacaeval/95.wav" type="audio/wav">
+            </audio>
+            <div class="q-text"> I want to start saving some money by growing my own food. Can I do this during the winter with an indoor garden?</div>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/BrainSpeech/alpacaeval/95.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/Freeze-Omni/alpacaeval/95.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/GLM4-Voice/alpacaeval/95.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/LLaMa-Omni/alpacaeval/95.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/LLaMa-Omni2/alpacaeval/95.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/VITA-Audio/alpacaeval/95.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/Step-Audio2/alpacaeval/95.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/Qwen2.5-Omni/alpacaeval/95.wav" type="audio/wav"></audio>
+          </td>
+        </tr> -->
+
+        <tr>
+          <td>
+            <audio controls preload="none">
+               <source src="./audio/questions/commoneval/8.wav" type="audio/wav">
+            </audio>
+            <div class="q-text">Are we building a generation of web addicts?</div>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/BrainSpeech/commoneval/8.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/Freeze-Omni/commoneval/8.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/GLM4-Voice/commoneval/8.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/LLaMa-Omni/commoneval/8.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/LLaMa-Omni2/commoneval/8.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/VITA-Audio/commoneval/8.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/Step-Audio2/commoneval/8.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/Qwen2.5-Omni/commoneval/8.wav" type="audio/wav"></audio>
+          </td>
+
+        </tr>
+        
+        <tr>
+          <td>
+            <audio controls preload="none">
+               <source src="./audio/questions/commoneval/24.wav" type="audio/wav">
+            </audio>
+            <div class="q-text">How do you deal with the unintended impacts of machine learning?</div>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/BrainSpeech/commoneval/24.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/Freeze-Omni/commoneval/24.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/GLM4-Voice/commoneval/24.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/LLaMa-Omni/commoneval/24.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/LLaMa-Omni2/commoneval/24.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/VITA-Audio/commoneval/24.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/Step-Audio2/commoneval/24.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/Qwen2.5-Omni/commoneval/24.wav" type="audio/wav"></audio>
+          </td>
+        </tr>
+        
+        <tr>
+          <td>
+            <audio controls preload="none">
+               <source src="./audio/questions/commoneval/58.wav" type="audio/wav">
+            </audio>
+            <div class="q-text">Which is the best women's baseball team?</div>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/BrainSpeech/commoneval/58.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/Freeze-Omni/commoneval/58.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/GLM4-Voice/commoneval/58.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/LLaMa-Omni/commoneval/58.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/LLaMa-Omni2/commoneval/58.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/VITA-Audio/commoneval/58.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/Step-Audio2/commoneval/58.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/Qwen2.5-Omni/commoneval/58.wav" type="audio/wav"></audio>
+          </td>
+        </tr>
+
+        <tr>
+          <td>
+            <audio controls preload="none">
+               <source src="./audio/questions/commoneval/67.wav" type="audio/wav">
+            </audio>
+            <div class="q-text">History of Africa.</div>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/BrainSpeech/commoneval/67.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/Freeze-Omni/commoneval/67.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/GLM4-Voice/commoneval/67.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/LLaMa-Omni/commoneval/67.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/LLaMa-Omni2/commoneval/67.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/VITA-Audio/commoneval/67.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/Step-Audio2/commoneval/67.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/Qwen2.5-Omni/commoneval/67.wav" type="audio/wav"></audio>
+          </td>
+        </tr>
+
+        <tr>
+          <td>
+            <audio controls preload="none">
+               <source src="./audio/questions/commoneval/73.wav" type="audio/wav">
+            </audio>
+            <div class="q-text">How can we efficiently purify water using the least amount of energy?</div>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/BrainSpeech/commoneval/73.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/Freeze-Omni/commoneval/73.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/GLM4-Voice/commoneval/73.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/LLaMa-Omni/commoneval/73.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/LLaMa-Omni2/commoneval/73.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/VITA-Audio/commoneval/73.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/Step-Audio2/commoneval/73.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/Qwen2.5-Omni/commoneval/73.wav" type="audio/wav"></audio>
+          </td>
+        </tr>
+
+        <tr>
+          <td>
+            <audio controls preload="none">
+               <source src="./audio/questions/commoneval/89.wav" type="audio/wav">
+            </audio>
+            <div class="q-text">What is the meaning of life?</div>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/BrainSpeech/commoneval/89.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/Freeze-Omni/commoneval/89.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/GLM4-Voice/commoneval/89.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/LLaMa-Omni/commoneval/89.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/LLaMa-Omni2/commoneval/89.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/VITA-Audio/commoneval/89.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/Step-Audio2/commoneval/89.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/Qwen2.5-Omni/commoneval/89.wav" type="audio/wav"></audio>
+          </td>
+        </tr>
+
+        <tr>
+          <td>
+            <audio controls preload="none">
+               <source src="./audio/questions/genemotion-en/12.wav" type="audio/wav">
+            </audio>
+            <div class="q-text">Read the following sentence with an angry tone: 'This is completely unacceptable!'</div>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/BrainSpeech/genemotion-en/12.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/Freeze-Omni/genemotion-en/12.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/GLM4-Voice/genemotion-en/12.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/LLaMa-Omni/genemotion-en/12.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/LLaMa-Omni2/genemotion-en/12.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/VITA-Audio/genemotion-en/12.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/Step-Audio2/genemotion-en/12.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/Qwen2.5-Omni/genemotion-en/12.wav" type="audio/wav"></audio>
+          </td>
+        </tr>
+
+        <tr>
+          <td>
+            <audio controls preload="none">
+               <source src="./audio/questions/genemotion-en/16.wav" type="audio/wav">
+            </audio>
+            <div class="q-text">Read the following sentence with a sad tone: 'I feel so alone...'</div>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/BrainSpeech/genemotion-en/16.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/Freeze-Omni/genemotion-en/16.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/GLM4-Voice/genemotion-en/16.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/LLaMa-Omni/genemotion-en/16.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/LLaMa-Omni2/genemotion-en/16.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/VITA-Audio/genemotion-en/16.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/Step-Audio2/genemotion-en/16.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/Qwen2.5-Omni/genemotion-en/16.wav" type="audio/wav"></audio>
+          </td>
+        </tr>
+
+        <tr>
+          <td>
+            <audio controls preload="none">
+               <source src="./audio/questions/genemotion-en/24.wav" type="audio/wav">
+            </audio>
+            <div class="q-text">Read the following sentence with an angry tone: 'This is ridiculous! Why can’t you just listen?!'</div>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/BrainSpeech/genemotion-en/24.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/Freeze-Omni/genemotion-en/24.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/GLM4-Voice/genemotion-en/24.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/LLaMa-Omni/genemotion-en/24.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/LLaMa-Omni2/genemotion-en/24.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/VITA-Audio/genemotion-en/24.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/Step-Audio2/genemotion-en/24.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/Qwen2.5-Omni/genemotion-en/24.wav" type="audio/wav"></audio>
+          </td>
+        </tr>
+
+        <tr>
+          <td>
+            <audio controls preload="none">
+               <source src="./audio/questions/genemotion-en/41.wav" type="audio/wav">
+            </audio>
+            <div class="q-text">Read the following sentence with a surprised tone: 'You’re really going to do that? I never thought you would!'</div>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/BrainSpeech/genemotion-en/41.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/Freeze-Omni/genemotion-en/41.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/GLM4-Voice/genemotion-en/41.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/LLaMa-Omni/genemotion-en/41.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/LLaMa-Omni2/genemotion-en/41.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/VITA-Audio/genemotion-en/41.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/Step-Audio2/genemotion-en/41.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/Qwen2.5-Omni/genemotion-en/41.wav" type="audio/wav"></audio>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <audio controls preload="none">
+               <source src="./audio/questions/genemotion-en/44.wav" type="audio/wav">
+            </audio>
+            <div class="q-text">Read the following sentence with a fearful tone: 'We should leave, something doesn’t feel right...'</div>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/BrainSpeech/genemotion-en/44.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/Freeze-Omni/genemotion-en/44.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/GLM4-Voice/genemotion-en/44.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/LLaMa-Omni/genemotion-en/44.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/LLaMa-Omni2/genemotion-en/44.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/VITA-Audio/genemotion-en/44.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/Step-Audio2/genemotion-en/44.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/Qwen2.5-Omni/genemotion-en/44.wav" type="audio/wav"></audio>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <audio controls preload="none">
+               <source src="./audio/questions/genemotion-en/45.wav" type="audio/wav">
+            </audio>
+            <div class="q-text">Read the following sentence with a happy tone: 'This is such a wonderful day! I’m so glad we’re here!'</div>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/BrainSpeech/genemotion-en/45.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/Freeze-Omni/genemotion-en/45.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/GLM4-Voice/genemotion-en/45.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/LLaMa-Omni/genemotion-en/45.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/LLaMa-Omni2/genemotion-en/45.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/VITA-Audio/genemotion-en/45.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/Step-Audio2/genemotion-en/45.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/Qwen2.5-Omni/genemotion-en/45.wav" type="audio/wav"></audio>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <audio controls preload="none">
+               <source src="./audio/questions/genemotion-en/52.wav" type="audio/wav">
+            </audio>
+            <div class="q-text">Read the following sentence with a sad tone: 'I just don’t know what to do anymore...'</div>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/BrainSpeech/genemotion-en/52.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/Freeze-Omni/genemotion-en/52.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/GLM4-Voice/genemotion-en/52.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/LLaMa-Omni/genemotion-en/52.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/LLaMa-Omni2/genemotion-en/52.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/VITA-Audio/genemotion-en/52.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/Step-Audio2/genemotion-en/52.wav" type="audio/wav"></audio>
+          </td>
+          <td>
+            <audio controls preload="none"><source src="./audio/Qwen2.5-Omni/genemotion-en/52.wav" type="audio/wav"></audio>
+          </td>
+        </tr>
+        
+      </tbody>
+    </table>
+  </div>
+  
+</div>
+
+
+				
+			</section>
+		</article>
+	</main>
+
+</div>
+
+<script>
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-139981676-1', 'auto');
+	ga('send', 'pageview');
+</script>
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+
+<script type="text/x-mathjax-config">
+     MathJax.Hub.Config({
+         HTML: ["input/TeX","output/HTML-CSS"],
+         TeX: {
+                Macros: {
+                         bm: ["\\boldsymbol{#1}", 1],
+                         argmax: ["\\mathop{\\rm arg\\,max}\\limits"],
+                         argmin: ["\\mathop{\\rm arg\\,min}\\limits"]},
+                extensions: ["AMSmath.js","AMSsymbols.js"],
+                equationNumbers: { autoNumber: "AMS" } },
+         extensions: ["tex2jax.js"],
+         jax: ["input/TeX","output/HTML-CSS"],
+         tex2jax: { inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+                    displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+                    processEscapes: true },
+         "HTML-CSS": { availableFonts: ["TeX"],
+                       linebreaks: { automatic: true } }
+     });
+ </script>
+
+ <script type="text/x-mathjax-config">
+     MathJax.Hub.Config({
+       tex2jax: {
+         skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+       }
+     });
+ </script>
+
+ <script type="text/javascript" async
+   src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-MML-AM_CHTML">
+ </script>
+
+
+
+
+</body>
+</html>

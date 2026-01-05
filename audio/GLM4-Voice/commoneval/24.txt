@@ -1,0 +1,1 @@
+Dealing with the unintended impacts of machine learning is crucial. First, we need to ensure data privacy and security, using encryption and anonymization.透明度和可解释性也很重要，这样人们知道决策是如何做出的。还要注意公平性，避免算法歧视。另外，机器学习模型需要持续监控，及时更新，以适应不断变化的环境。最后，我们要遵守法律法规，进行伦理审查，准备应对可能的紧急情况。这些措施能够帮助我们更好地管理机器学习技术带来的风险。
